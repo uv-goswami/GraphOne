@@ -14,6 +14,8 @@ import { statsRoutes } from './routes/stats';
 import { searchRoutes } from './routes/search';
 import { feedRoutes } from './routes/feed';
 import { graphRoutes } from './routes/graph';
+import { companyWriteRoutes } from './routes/company-write';
+
 
 
 // Create Fastify instance
@@ -65,6 +67,8 @@ server.register(statsRoutes);
 server.register(searchRoutes);
 server.register(feedRoutes);
 server.register(graphRoutes);
+server.register(companyWriteRoutes);
+
 
 // Global error handler
 server.setErrorHandler((error, request, reply) => {
