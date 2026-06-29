@@ -22,7 +22,7 @@
   },
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    "build": "prisma generate && tsc",
     "start": "node dist/server.js",
     "start:dev": "tsx src/server.ts",
     "seed": "tsx prisma/seed.ts",
