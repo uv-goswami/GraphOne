@@ -6,6 +6,7 @@ import helmet from '@fastify/helmet';
 import { serializerCompiler, validatorCompiler } from '@fastify/type-provider-zod';
 import { ZodError } from 'zod';
 import { prisma } from './lib/prisma';
+import { companyRoutes } from './routes/companies';
 
 // Create Fastify instance
 const server = fastify({
@@ -45,6 +46,9 @@ server.register(rateLimit, {
   global: true,
   keyGenerator: (req) => req.ip || 'unknown',
 });
+
+// Register routes
+server.register(companyRoutes);
 
 // Global error handler
 server.setErrorHandler((error, request, reply) => {
