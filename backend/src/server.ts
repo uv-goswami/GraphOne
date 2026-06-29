@@ -8,6 +8,8 @@ import { ZodError } from 'zod';
 import { prisma } from './lib/prisma';
 import { companyRoutes } from './routes/companies';
 import { investorRoutes } from './routes/investors';
+import { productRoutes } from './routes/products';
+import { newsRoutes } from './routes/news';
 
 // Create Fastify instance
 const server = fastify({
@@ -52,6 +54,8 @@ server.register(rateLimit, {
 // Register routes
 server.register(companyRoutes);
 server.register(investorRoutes);
+server.register(productRoutes);
+server.register(newsRoutes);
 
 // Global error handler
 server.setErrorHandler((error, request, reply) => {
