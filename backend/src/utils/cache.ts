@@ -1,6 +1,7 @@
 import NodeCache from 'node-cache';
 
 const TTL = Number(process.env.CACHE_TTL) || 300;
+
 export const cache = new NodeCache({
   stdTTL: TTL,
   checkperiod: TTL * 0.2,
@@ -11,7 +12,9 @@ export function getCached<T>(key: string): T | undefined {
 }
 
 export function setCache<T>(key: string, value: T, ttl?: number): boolean {
-  return cache.set(key, value, ttl);
+  // Ensure ttl is a number; if undefined, use the default TTL
+  const effectiveTtl = ttl ?? TTL;
+  return cache.set(key, value, effectiveTtl);
 }
 
 export function deleteCache(key: string): number {
