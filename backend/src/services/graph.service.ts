@@ -1,8 +1,7 @@
-import { GraphRepository } from '../repositories/graph.repository';
+import { GraphRepository, GraphNode, GraphEdge } from '../repositories/graph.repository';
 
 export class GraphService {
-  static async getEcosystemGraph(slug: string) {
-    const graph = await GraphRepository.getEcosystemGraph(slug);
-    return graph;
+  static async getEcosystemGraph(slug: string): Promise<{ nodes: GraphNode[]; edges: GraphEdge[] }> {
+    return GraphRepository.getEcosystemGraph(slug);
   }
 }

@@ -17,8 +17,6 @@ export class SearchRepository {
   static async search(query: string, limit: number = 20): Promise<SearchResult[]> {
     const results: SearchResult[] = [];
 
-    // Normalize query for ILIKE
-    const searchTerm = `%${query}%`;
 
     // 1. Search Companies
     const companies = await prisma.company.findMany({

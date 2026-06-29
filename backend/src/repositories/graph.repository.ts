@@ -1,5 +1,19 @@
 import { prisma } from '../lib/prisma';
 
+export interface GraphNode {
+  id: string;
+  type: 'company' | 'investor' | 'product' | 'tag';
+  label: string;
+  slug?: string;
+  logoUrl?: string | null;
+}
+
+export interface GraphEdge {
+  source: string;
+  target: string;
+  relationship: string;
+}
+
 interface GraphNode {
   id: string;
   type: 'company' | 'investor' | 'product' | 'tag';

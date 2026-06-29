@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import { FastifyInstance, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { CompanyService } from '../services/company.service';
 
@@ -11,112 +11,128 @@ const querySchema = z.object({
   cursor: z.string().optional(),
 });
 
+const slugParamsSchema = z.object({
+  slug: z.string(),
+});
+
+const createBodySchema = z.object({
+  name: z.string().min(1),
+  slug: z.string().regex(/^[a-z0-9-]+$/),
+  description: z.string().optional(),
+  category: z.string().min(1),
+  fundingTotal: z.coerce.number().optional(),
+  employeeCount: z.coerce.number().optional(),
+  foundedYear: z.coerce.number().optional(),
+  hqCity: z.string().optional(),
+  hqCountry: z.string().optional(),
+  logoUrl: z.string().url().optional(),
+  website: z.string().url().optional(),
+  stage: z.string().optional(),
+  isUnicorn: z.boolean().optional(),
+  valuation: z.coerce.number().optional(),
+});
+
+const claimBodySchema = z.object({
+  claimedBy: z.string().email(),
+});
+
 export async function companyRoutes(server: FastifyInstance) {
   // GET /companies
-  server.get(
-    '/companies',
-    {
-      schema: {
-        querystring: querySchema,
-        response: {
-          200: z.object({
-            data: z.array(z.any()),
-            meta: z.object({
-              pagination: z.object({
-                nextCursor: z.string().nullable(),
-                limit: z.number(),
-              }),
-              timestamp: z.string(),
-            }),
-            error: z.null(),
-          }),
-        },
+  server.get('/companies', {
+    schema: { querystring: querySchema },
+  }, async (request: FastifyRequest) => {
+    const query = request.query as z.infer<typeof querySchema>;
+    const result = await CompanyService.listCompanies({
+      category: query.category,
+      stage: query.stage,
+      country: query.country,
+      sort: query.sort,
+      limit: query.limit,
+      cursor: query.cursor,
+    });
+    return {
+      data: result.data,
+      meta: {
+        pagination: { nextCursor: result.nextCursor, limit: query.limit },
+        timestamp: new Date().toISOString(),
       },
-    },
-    async (request: FastifyRequest, reply: FastifyReply) => {
-      const query = request.query as z.infer<typeof querySchema>;
-
-      const result = await CompanyService.listCompanies({
-        category: query.category,
-        stage: query.stage,
-        country: query.country,
-        sort: query.sort,
-        limit: query.limit,
-        cursor: query.cursor,
-      });
-
-      return {
-        data: result.data,
-        meta: {
-          pagination: {
-            nextCursor: result.nextCursor,
-            limit: query.limit,
-          },
-          timestamp: new Date().toISOString(),
-        },
-        error: null,
-      };
-    }
-  );
+      error: null,
+    };
+  });
 
   // GET /companies/:slug
-  server.get(
-    '/companies/:slug',
-    {
-      schema: {
-        params: z.object({
-          slug: z.string(),
-        }),
-        response: {
-          200: z.object({
-            data: z.any(),
-            meta: z.object({
-              timestamp: z.string(),
-            }),
-            error: z.null(),
-          }),
-          404: z.object({
-            data: z.null(),
-            meta: z.object({
-              timestamp: z.string(),
-            }),
-            error: z.object({
-              code: z.literal('NOT_FOUND'),
-              message: z.string(),
-              statusCode: z.number(),
-            }),
-          }),
-        },
-      },
-    },
-    async (request: FastifyRequest, reply: FastifyReply) => {
-      const { slug } = request.params as { slug: string };
-
-      try {
-        const company = await CompanyService.getCompanyBySlug(slug);
-        return {
-          data: company,
-          meta: {
-            timestamp: new Date().toISOString(),
-          },
-          error: null,
-        };
-      } catch (err) {
-        if (err instanceof Error && err.message === 'NOT_FOUND') {
-          return reply.status(404).send({
-            data: null,
-            meta: {
-              timestamp: new Date().toISOString(),
-            },
-            error: {
-              code: 'NOT_FOUND',
-              message: `Company with slug "${slug}" not found`,
-              statusCode: 404,
-            },
-          });
-        }
-        throw err;
+  server.get('/companies/:slug', {
+    schema: { params: slugParamsSchema },
+  }, async (request: FastifyRequest) => {
+    const { slug } = request.params as { slug: string };
+    try {
+      const company = await CompanyService.getCompanyBySlug(slug);
+      return {
+        data: company,
+        meta: { timestamp: new Date().toISOString() },
+        error: null,
+      };
+    } catch (err) {
+      if (err instanceof Error && err.message === 'NOT_FOUND') {
+        throw { statusCode: 404, message: `Company with slug "${slug}" not found` };
       }
+      throw err;
     }
-  );
+  });
+
+  // POST /companies (admin)
+  server.post('/companies', {
+    schema: {
+      body: createBodySchema,
+      security: [{ apiKey: [] }],
+    },
+    preHandler: async (request: FastifyRequest) => {
+      const apiKey = request.headers['x-api-key'];
+      if (apiKey !== process.env.ADMIN_API_KEY) {
+        throw { statusCode: 401, message: 'Invalid or missing API key' };
+      }
+    },
+  }, async (request: FastifyRequest) => {
+    const body = request.body as z.infer<typeof createBodySchema>;
+    const company = await CompanyService.createCompany(body);
+    return {
+      data: company,
+      meta: { timestamp: new Date().toISOString() },
+      error: null,
+    };
+  });
+
+  // POST /companies/:slug/claim
+  server.post('/companies/:slug/claim', {
+    schema: {
+      params: slugParamsSchema,
+      body: claimBodySchema,
+      security: [{ apiKey: [] }],
+    },
+    preHandler: async (request: FastifyRequest) => {
+      const apiKey = request.headers['x-api-key'];
+      if (apiKey !== process.env.ADMIN_API_KEY) {
+        throw { statusCode: 401, message: 'Invalid or missing API key' };
+      }
+    },
+  }, async (request: FastifyRequest) => {
+    const { slug } = request.params as { slug: string };
+    const { claimedBy } = request.body as z.infer<typeof claimBodySchema>;
+    try {
+      const company = await CompanyService.claimCompany(slug, claimedBy);
+      return {
+        data: company,
+        meta: { timestamp: new Date().toISOString() },
+        error: null,
+      };
+    } catch (err) {
+      if (err instanceof Error && err.message === 'NOT_FOUND') {
+        throw { statusCode: 404, message: `Company with slug "${slug}" not found` };
+      }
+      if (err instanceof Error && err.message === 'ALREADY_CLAIMED') {
+        throw { statusCode: 409, message: 'Company already claimed' };
+      }
+      throw err;
+    }
+  });
 }

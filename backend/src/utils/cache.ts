@@ -1,11 +1,9 @@
 import NodeCache from 'node-cache';
 
-// Create a cache instance with default TTL (5 minutes)
-const TTL = Number(process.env.CACHE_TTL) || 300; // 5 minutes in seconds
-
+const TTL = Number(process.env.CACHE_TTL) || 300;
 export const cache = new NodeCache({
   stdTTL: TTL,
-  checkperiod: TTL * 0.2, // Check for expired keys every 20% of TTL
+  checkperiod: TTL * 0.2,
 });
 
 export function getCached<T>(key: string): T | undefined {
