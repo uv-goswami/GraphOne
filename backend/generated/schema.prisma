@@ -1,0 +1,182 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  // Generate the client into backend/generated as required
+  output   = "../generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  // url is now configured in prisma.config.ts
+}
+
+// ---------- Core Entities ----------
+
+model Company {
+  id                  String    @id @default(cuid())
+  name                String
+  slug                String    @unique
+  description         String?
+  category            String
+  fundingTotal        BigInt?   @map("funding_total")
+  employeeCount       Int?      @map("employee_count")
+  foundedYear         Int?      @map("founded_year")
+  hqCity              String?   @map("hq_city")
+  hqCountry           String?   @map("hq_country")
+  logoUrl             String?   @map("logo_url")
+  website             String?
+  stage               String?
+  isUnicorn           Boolean?  @default(false) @map("is_unicorn")
+  valuation           BigInt?
+  growthScore         Float?    @default(0) @map("growth_score")
+  lastScrapedAt       DateTime? @map("last_scraped_at")
+  dataConfidenceScore Float?    @default(0) @map("data_confidence_score")
+  claimedBy           String?   @map("claimed_by")
+  claimedAt           DateTime? @map("claimed_at")
+
+  // Relations
+  founders      Founder[]
+  products      Product[]
+  fundingRounds FundingRound[]
+  relatedFrom   CompanyRelationship[] @relation("Source")
+  relatedTo     CompanyRelationship[] @relation("Target")
+  newsArticles  NewsArticle[]         @relation("NewsArticleCompanies")
+  tags          Tag[]                 @relation("CompanyTags")
+
+  @@map("companies")
+}
+
+model Investor {
+  id             String   @id @default(cuid())
+  name           String
+  slug           String   @unique
+  type           String? // VC, Angel, Corporate
+  bio            String?
+  aum            BigInt?
+  portfolioCount Int?     @map("portfolio_count")
+  stageFocus     String[] @map("stage_focus")
+  sectorFocus    String[] @map("sector_focus")
+  location       String?
+  logoUrl        String?  @map("logo_url")
+  avgCheckSize   BigInt?  @map("avg_check_size")
+  fundNumber     Int?     @map("fund_number")
+
+  // Relations
+  leadRounds FundingRound[] @relation("LeadInvestor")
+
+  @@map("investors")
+}
+
+model Founder {
+  id        String  @id @default(cuid())
+  name      String
+  slug      String  @unique
+  title     String?
+  companyId String  @map("company_id")
+  bio       String?
+  twitter   String?
+  linkedin  String?
+  location  String?
+  photoUrl  String? @map("photo_url")
+
+  // Relations
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, slug])
+  @@map("founders")
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  companyId   String    @map("company_id")
+  name        String
+  slug        String    @unique
+  description String?
+  category    String?
+  launchDate  DateTime? @map("launch_date")
+  upvotes     Int?      @default(0)
+  websiteUrl  String?   @map("website_url")
+
+  // Relations
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tags    Tag[]   @relation("ProductTags")
+
+  @@map("products")
+}
+
+model FundingRound {
+  id             String   @id @default(cuid())
+  companyId      String   @map("company_id")
+  roundType      String   @map("round_type")
+  amount         BigInt?
+  currency       String?  @default("USD")
+  date           DateTime
+  leadInvestorId String?  @map("lead_investor_id")
+  coInvestors    String[] @map("co_investors") // array of Investor slugs or IDs
+
+  // Relations
+  company      Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  leadInvestor Investor? @relation("LeadInvestor", fields: [leadInvestorId], references: [id])
+
+  @@map("funding_rounds")
+}
+
+model NewsArticle {
+  id                String   @id @default(cuid())
+  title             String
+  url               String
+  publishedAt       DateTime @map("published_at")
+  source            String
+  tag               String?
+  relatedCompanyIds String[] @map("related_company_ids")
+  summary           String?
+
+  // Relations
+  companies Company[] @relation("NewsArticleCompanies")
+
+  @@map("news_articles")
+}
+
+// ---------- New Entities from Assessment ----------
+
+model Tag {
+  id   String  @id @default(cuid())
+  name String
+  slug String  @unique
+  type TagType // company, product, news
+
+  // Relations (polymorphic – stored as separate relation tables or via explicit many-to-many)
+  companies Company[] @relation("CompanyTags")
+  products  Product[] @relation("ProductTags")
+
+  @@map("tags")
+}
+
+enum TagType {
+  company
+  product
+  news
+}
+
+model CompanyRelationship {
+  id               String           @id @default(cuid())
+  sourceCompanyId  String           @map("source_company_id")
+  targetCompanyId  String           @map("target_company_id")
+  relationshipType RelationshipType @map("relationship_type")
+
+  // Relations
+  sourceCompany Company @relation("Source", fields: [sourceCompanyId], references: [id], onDelete: Cascade)
+  targetCompany Company @relation("Target", fields: [targetCompanyId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceCompanyId, targetCompanyId, relationshipType])
+  @@map("company_relationships")
+}
+
+enum RelationshipType {
+  competitor
+  partner
+  subsidiary
+  parent
+}

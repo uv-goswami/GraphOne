@@ -1,0 +1,14 @@
+[
+  { "name": "AI Agents", "slug": "ai-agents", "type": "company" },
+  { "name": "AI Coding", "slug": "ai-coding", "type": "company" },
+  { "name": "AI Search", "slug": "ai-search", "type": "company" },
+  { "name": "AI Video", "slug": "ai-video", "type": "company" },
+  { "name": "AI Interactive", "slug": "ai-interactive", "type": "company" },
+  { "name": "Foundation Models", "slug": "foundation-models", "type": "company" },
+  { "name": "Generative AI", "slug": "generative-ai", "type": "company" },
+  { "name": "ChatGPT", "slug": "chatgpt", "type": "product" },
+  { "name": "Multimodal", "slug": "multimodal", "type": "product" },
+  { "name": "Funding News", "slug": "funding-news", "type": "news" },
+  { "name": "Product Launch", "slug": "product-launch", "type": "news" },
+  { "name": "Acquisition", "slug": "acquisition", "type": "news" }
+]
