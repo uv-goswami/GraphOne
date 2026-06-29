@@ -7,6 +7,7 @@ import { serializerCompiler, validatorCompiler } from '@fastify/type-provider-zo
 import { ZodError } from 'zod';
 import { prisma } from './lib/prisma';
 import { companyRoutes } from './routes/companies';
+import { investorRoutes } from './routes/investors';
 
 // Create Fastify instance
 const server = fastify({
@@ -47,8 +48,10 @@ server.register(rateLimit, {
   keyGenerator: (req) => req.ip || 'unknown',
 });
 
+
 // Register routes
 server.register(companyRoutes);
+server.register(investorRoutes);
 
 // Global error handler
 server.setErrorHandler((error, request, reply) => {
