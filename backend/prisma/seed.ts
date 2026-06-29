@@ -24,7 +24,7 @@ async function main() {
   const founders = JSON.parse(fs.readFileSync(path.join(dataDir, 'founders.json'), 'utf-8'));
   const products = JSON.parse(fs.readFileSync(path.join(dataDir, 'products.json'), 'utf-8'));
   const fundingRounds = JSON.parse(fs.readFileSync(path.join(dataDir, 'fundingRounds.json'), 'utf-8'));
-  // TODO: add newsArticles and relationships when ready
+  const newsArticles = JSON.parse(fs.readFileSync(path.join(dataDir, 'newsArticles.json'), 'utf-8'));
 
   // Insert Tags
   console.log(`📌 Inserting ${tags.length} tags...`);
@@ -138,13 +138,13 @@ async function main() {
       console.warn(`⚠️ Company with slug "${fr.companySlug}" not found. Skipping funding round.`);
       continue;
     }
-    let leadInvestorId = undefined;
+    let leadInvestorId: string | undefined = undefined;
     if (fr.leadInvestorSlug) {
       const investor = await prisma.investor.findUnique({
         where: { slug: fr.leadInvestorSlug },
       });
       if (investor) {
-        let leadInvestorId: string | undefined = undefined;
+        leadInvestorId = investor.id;
       } else {
         console.warn(`⚠️ Lead investor "${fr.leadInvestorSlug}" not found. Skipping lead.`);
       }
@@ -163,7 +163,32 @@ async function main() {
     });
   }
 
-  // Add similar blocks for newsArticles and relationships when data is ready
+  // Insert News Articles
+  console.log(`📰 Inserting ${newsArticles.length} news articles...`);
+  for (const article of newsArticles) {
+    // Validate that related companies exist
+    const validCompanyIds = [];
+    for (const slug of article.relatedCompanyIds) {
+      const company = await prisma.company.findUnique({
+        where: { slug },
+        select: { id: true },
+      });
+      if (company) {
+        validCompanyIds.push(company.id);
+      }
+    }
+    await prisma.newsArticle.create({
+      data: {
+        title: article.title,
+        url: article.url,
+        publishedAt: new Date(article.publishedAt),
+        source: article.source,
+        tag: article.tag,
+        relatedCompanyIds: validCompanyIds,
+        summary: article.summary,
+      },
+    });
+  }
 
   console.log('✅ Seed completed successfully!');
 }

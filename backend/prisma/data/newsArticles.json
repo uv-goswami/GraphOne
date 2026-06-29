@@ -1,0 +1,281 @@
+[
+  {
+    "title": "OpenAI launches GPT-4o with improved multimodal capabilities",
+    "url": "https://techcrunch.com/2026/06/01/openai-gpt-4o",
+    "publishedAt": "2026-06-01T10:00:00.000Z",
+    "source": "TechCrunch",
+    "tag": "Product Launch",
+    "relatedCompanyIds": ["openai"],
+    "summary": "OpenAI's new model combines text, vision, and audio understanding."
+  },
+  {
+    "title": "OpenAI raises $40B in new funding round led by SoftBank",
+    "url": "https://reuters.com/2026/05/15/openai-funding",
+    "publishedAt": "2026-05-15T14:30:00.000Z",
+    "source": "Reuters",
+    "tag": "Funding News",
+    "relatedCompanyIds": ["openai"],
+    "summary": "The round values OpenAI at $150B post-money."
+  },
+  {
+    "title": "Anthropic announces Claude 3.5 Sonnet with advanced reasoning",
+    "url": "https://techcrunch.com/2026/06/20/anthropic-claude-3-5",
+    "publishedAt": "2026-06-20T09:00:00.000Z",
+    "source": "TechCrunch",
+    "tag": "Product Launch",
+    "relatedCompanyIds": ["anthropic"],
+    "summary": "The new model outperforms GPT-4 on coding and math benchmarks."
+  },
+  {
+    "title": "Mistral AI releases new open-weight model with 12B parameters",
+    "url": "https://venturebeat.com/2026/06/10/mistral-12b",
+    "publishedAt": "2026-06-10T16:00:00.000Z",
+    "source": "VentureBeat",
+    "tag": "Product Launch",
+    "relatedCompanyIds": ["mistral-ai"],
+    "summary": "The model is available for commercial use under MIT license."
+  },
+  {
+    "title": "Cursor raises $60M Series A to build AI-powered IDE",
+    "url": "https://techcrunch.com/2026/05/20/cursor-60m",
+    "publishedAt": "2026-05-20T11:00:00.000Z",
+    "source": "TechCrunch",
+    "tag": "Funding News",
+    "relatedCompanyIds": ["cursor"],
+    "summary": "The round was led by Andreessen Horowitz and Sequoia Capital."
+  },
+  {
+    "title": "Perplexity launches Pro search with real-time data integration",
+    "url": "https://techcrunch.com/2026/06/05/perplexity-pro",
+    "publishedAt": "2026-06-05T08:30:00.000Z",
+    "source": "TechCrunch",
+    "tag": "Product Launch",
+    "relatedCompanyIds": ["perplexity"],
+    "summary": "The new tier includes advanced citation and data analysis tools."
+  },
+  {
+    "title": "Midjourney v7 introduces 3D scene generation",
+    "url": "https://venturebeat.com/2026/05/28/midjourney-3d",
+    "publishedAt": "2026-05-28T15:00:00.000Z",
+    "source": "VentureBeat",
+    "tag": "Product Launch",
+    "relatedCompanyIds": ["midjourney"],
+    "summary": "Users can now generate immersive 3D environments from text prompts."
+  },
+  {
+    "title": "Runway raises $200M Series C for AI video generation",
+    "url": "https://reuters.com/2026/04/10/runway-200m",
+    "publishedAt": "2026-04-10T12:00:00.000Z",
+    "source": "Reuters",
+    "tag": "Funding News",
+    "relatedCompanyIds": ["runway"],
+    "summary": "The round was co-led by Sequoia and Index Ventures."
+  },
+  {
+    "title": "Synthesia partners with Microsoft for enterprise AI avatars",
+    "url": "https://techcrunch.com/2026/06/15/synthesia-microsoft",
+    "publishedAt": "2026-06-15T13:00:00.000Z",
+    "source": "TechCrunch",
+    "tag": "Partnership",
+    "relatedCompanyIds": ["synthesia"],
+    "summary": "The partnership will integrate Synthesia's avatars into Microsoft Teams."
+  },
+  {
+    "title": "Glean acquires AI search startup for $200M",
+    "url": "https://reuters.com/2026/05/01/glean-acquisition",
+    "publishedAt": "2026-05-01T09:30:00.000Z",
+    "source": "Reuters",
+    "tag": "Acquisition",
+    "relatedCompanyIds": ["glean"],
+    "summary": "The acquisition strengthens Glean's enterprise search capabilities."
+  },
+  {
+    "title": "Hugging Face launches AI model hub with 1M models",
+    "url": "https://techcrunch.com/2026/05/25/huggingface-1m",
+    "publishedAt": "2026-05-25T14:00:00.000Z",
+    "source": "TechCrunch",
+    "tag": "Product Launch",
+    "relatedCompanyIds": ["hugging-face"],
+    "summary": "The platform now hosts over 1 million AI models."
+  },
+  {
+    "title": "Cohere secures $400M Series C at $2B valuation",
+    "url": "https://reuters.com/2026/03/20/cohere-400m",
+    "publishedAt": "2026-03-20T10:00:00.000Z",
+    "source": "Reuters",
+    "tag": "Funding News",
+    "relatedCompanyIds": ["cohere"],
+    "summary": "The round was led by Sequoia and Tiger Global."
+  },
+  {
+    "title": "xAI raises $500M Series A to compete with OpenAI",
+    "url": "https://techcrunch.com/2026/02/15/xai-500m",
+    "publishedAt": "2026-02-15T08:00:00.000Z",
+    "source": "TechCrunch",
+    "tag": "Funding News",
+    "relatedCompanyIds": ["xai"],
+    "summary": "Elon Musk's AI startup aims to build safe, truth-seeking AI."
+  },
+  {
+    "title": "Google DeepMind announces breakthrough in protein folding",
+    "url": "https://reuters.com/2026/04/05/deepmind-protein",
+    "publishedAt": "2026-04-05T16:30:00.000Z",
+    "source": "Reuters",
+    "tag": "Research",
+    "relatedCompanyIds": ["google-deepmind"],
+    "summary": "AlphaFold 3 achieves 99% accuracy in protein structure prediction."
+  },
+  {
+    "title": "Scale AI acquires data labeling startup for $150M",
+    "url": "https://techcrunch.com/2026/03/10/scale-acquisition",
+    "publishedAt": "2026-03-10T11:00:00.000Z",
+    "source": "TechCrunch",
+    "tag": "Acquisition",
+    "relatedCompanyIds": ["scale-ai"],
+    "summary": "The acquisition expands Scale's capabilities in video and audio labeling."
+  },
+  {
+    "title": "Weights & Biases launches new LLM observability tool",
+    "url": "https://venturebeat.com/2026/06/01/wandb-llm",
+    "publishedAt": "2026-06-01T09:00:00.000Z",
+    "source": "VentureBeat",
+    "tag": "Product Launch",
+    "relatedCompanyIds": ["weights-biases"],
+    "summary": "The tool provides real-time monitoring for production LLM deployments."
+  },
+  {
+    "title": "Dataiku adds AI governance features to enterprise platform",
+    "url": "https://techcrunch.com/2026/05/10/dataiku-governance",
+    "publishedAt": "2026-05-10T12:00:00.000Z",
+    "source": "TechCrunch",
+    "tag": "Product Launch",
+    "relatedCompanyIds": ["dataiku"],
+    "summary": "New features include bias detection and compliance reporting."
+  },
+  {
+    "title": "H2O.ai raises $100M Series C for AI democratization",
+    "url": "https://reuters.com/2026/04/20/h2o-100m",
+    "publishedAt": "2026-04-20T14:00:00.000Z",
+    "source": "Reuters",
+    "tag": "Funding News",
+    "relatedCompanyIds": ["h2o-ai"],
+    "summary": "The round was led by Sequoia and Bain Capital Ventures."
+  },
+  {
+    "title": "SambaNova Systems launches new AI training chip",
+    "url": "https://techcrunch.com/2026/06/15/sambanova-chip",
+    "publishedAt": "2026-06-15T08:30:00.000Z",
+    "source": "TechCrunch",
+    "tag": "Product Launch",
+    "relatedCompanyIds": ["sambanova"],
+    "summary": "The SN40 chip claims 2x performance improvement over previous generation."
+  },
+  {
+    "title": "Cerebras and Groq partner to build AI supercomputer",
+    "url": "https://venturebeat.com/2026/05/18/cerebras-groq",
+    "publishedAt": "2026-05-18T10:00:00.000Z",
+    "source": "VentureBeat",
+    "tag": "Partnership",
+    "relatedCompanyIds": ["cerebras", "groq"],
+    "summary": "The partnership aims to build the world's fastest AI training cluster."
+  },
+  {
+    "title": "Stability AI releases Stable Video Diffusion model",
+    "url": "https://techcrunch.com/2026/03/25/svd-release",
+    "publishedAt": "2026-03-25T15:00:00.000Z",
+    "source": "TechCrunch",
+    "tag": "Product Launch",
+    "relatedCompanyIds": ["stability-ai"],
+    "summary": "The model generates high-quality videos from text prompts."
+  },
+  {
+    "title": "Deepgram raises $100M Series B for speech AI",
+    "url": "https://reuters.com/2026/04/01/deepgram-100m",
+    "publishedAt": "2026-04-01T11:30:00.000Z",
+    "source": "Reuters",
+    "tag": "Funding News",
+    "relatedCompanyIds": ["deepgram"],
+    "summary": "The round was led by Tiger Global and Sequoia."
+  },
+  {
+    "title": "AssemblyAI launches real-time transcription API",
+    "url": "https://techcrunch.com/2026/06/08/assemblyai-realtime",
+    "publishedAt": "2026-06-08T09:00:00.000Z",
+    "source": "TechCrunch",
+    "tag": "Product Launch",
+    "relatedCompanyIds": ["assemblyai"],
+    "summary": "The new API supports streaming audio transcription with low latency."
+  },
+  {
+    "title": "Descript raises $100M Series C for AI video editing",
+    "url": "https://venturebeat.com/2026/05/05/descript-100m",
+    "publishedAt": "2026-05-05T13:00:00.000Z",
+    "source": "VentureBeat",
+    "tag": "Funding News",
+    "relatedCompanyIds": ["descript"],
+    "summary": "The round values Descript at $1.2B post-money."
+  },
+  {
+    "title": "NVIDIA announces new AI chip for data centers",
+    "url": "https://reuters.com/2026/05/22/nvidia-chip",
+    "publishedAt": "2026-05-22T14:30:00.000Z",
+    "source": "Reuters",
+    "tag": "Product Launch",
+    "relatedCompanyIds": ["nvidia"],
+    "summary": "The Blackwell B200 chip delivers 2.5x AI training performance."
+  },
+  {
+    "title": "Databricks acquires AI startup for $500M",
+    "url": "https://techcrunch.com/2026/04/25/databricks-acquisition",
+    "publishedAt": "2026-04-25T10:00:00.000Z",
+    "source": "TechCrunch",
+    "tag": "Acquisition",
+    "relatedCompanyIds": ["databricks"],
+    "summary": "The acquisition adds AI orchestration capabilities to Databricks."
+  },
+  {
+    "title": "Character.ai introduces premium tier with faster responses",
+    "url": "https://venturebeat.com/2026/06/12/characterai-premium",
+    "publishedAt": "2026-06-12T16:00:00.000Z",
+    "source": "VentureBeat",
+    "tag": "Product Launch",
+    "relatedCompanyIds": ["character-ai"],
+    "summary": "Users can now get priority access with lower latency."
+  },
+  {
+    "title": "Airtable launches AI-powered automations for no-code apps",
+    "url": "https://techcrunch.com/2026/05/30/airtable-ai",
+    "publishedAt": "2026-05-30T09:30:00.000Z",
+    "source": "TechCrunch",
+    "tag": "Product Launch",
+    "relatedCompanyIds": ["airtable"],
+    "summary": "The new features enable users to build AI agents without coding."
+  },
+  {
+    "title": "Notion integrates AI writing assistant for all users",
+    "url": "https://reuters.com/2026/06/18/notion-ai",
+    "publishedAt": "2026-06-18T08:00:00.000Z",
+    "source": "Reuters",
+    "tag": "Product Launch",
+    "relatedCompanyIds": ["notion"],
+    "summary": "The AI assistant helps with content generation and summarization."
+  },
+  {
+    "title": "Adept AI launches enterprise workflow automation platform",
+    "url": "https://techcrunch.com/2026/06/25/adept-enterprise",
+    "publishedAt": "2026-06-25T11:00:00.000Z",
+    "source": "TechCrunch",
+    "tag": "Product Launch",
+    "relatedCompanyIds": ["adept"],
+    "summary": "The platform automates complex business processes with AI agents."
+  },
+  {
+    "title": "Pika raises $55M Series A to advance AI video generation",
+    "url": "https://venturebeat.com/2026/05/12/pika-55m",
+    "publishedAt": "2026-05-12T14:00:00.000Z",
+    "source": "VentureBeat",
+    "tag": "Funding News",
+    "relatedCompanyIds": ["pika"],
+    "summary": "The round was led by Sequoia and Index Ventures."
+  }
+]

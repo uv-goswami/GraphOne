@@ -11,6 +11,10 @@ import { investorRoutes } from './routes/investors';
 import { productRoutes } from './routes/products';
 import { newsRoutes } from './routes/news';
 import { statsRoutes } from './routes/stats';
+import { searchRoutes } from './routes/search';
+import { feedRoutes } from './routes/feed';
+import { graphRoutes } from './routes/graph';
+
 
 // Create Fastify instance
 const server = fastify({
@@ -58,6 +62,9 @@ server.register(investorRoutes);
 server.register(productRoutes);
 server.register(newsRoutes);
 server.register(statsRoutes);
+server.register(searchRoutes);
+server.register(feedRoutes);
+server.register(graphRoutes);
 
 // Global error handler
 server.setErrorHandler((error, request, reply) => {
