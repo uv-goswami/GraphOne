@@ -15,6 +15,7 @@ export function setCache<T>(key: string, value: T, ttl?: number): boolean {
 }
 
 export function deleteCache(key: string): number {
+  if (!key) return 0;
   return cache.del(key);
 }
 

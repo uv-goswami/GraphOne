@@ -14,26 +14,11 @@ export interface GraphEdge {
   relationship: string;
 }
 
-interface GraphNode {
-  id: string;
-  type: 'company' | 'investor' | 'product' | 'tag';
-  label: string;
-  slug?: string;
-  logoUrl?: string | null;
-}
-
-interface GraphEdge {
-  source: string;
-  target: string;
-  relationship: string;
-}
-
 export class GraphRepository {
   static async getEcosystemGraph(companySlug: string): Promise<{
     nodes: GraphNode[];
     edges: GraphEdge[];
   }> {
-    // Fetch the company with all related data
     const company = await prisma.company.findUnique({
       where: { slug: companySlug },
       include: {
@@ -65,7 +50,6 @@ export class GraphRepository {
     const edges: GraphEdge[] = [];
     const nodeIds = new Set<string>();
 
-    // Helper to add a node
     const addNode = (node: GraphNode) => {
       if (!nodeIds.has(node.id)) {
         nodeIds.add(node.id);
@@ -73,7 +57,7 @@ export class GraphRepository {
       }
     };
 
-    // Add the main company node
+    // Add main company
     addNode({
       id: company.id,
       type: 'company',
@@ -87,26 +71,23 @@ export class GraphRepository {
     for (const round of company.fundingRounds) {
       if (round.leadInvestor) {
         const inv = round.leadInvestor;
-        const invId = inv.id;
-        if (!investorIds.has(invId)) {
-          investorIds.add(invId);
+        if (!investorIds.has(inv.id)) {
+          investorIds.add(inv.id);
           addNode({
-            id: invId,
+            id: inv.id,
             type: 'investor',
             label: inv.name,
             slug: inv.slug,
             logoUrl: inv.logoUrl,
           });
-          // Edge: company -> investor (funded_by)
           edges.push({
             source: company.id,
-            target: invId,
+            target: inv.id,
             relationship: 'funded_by',
           });
         }
       }
-      // Also co-investors are stored as slugs in coInvestors array
-      // We need to resolve those slugs to investor IDs
+      // Co-investors
       if (round.coInvestors && round.coInvestors.length > 0) {
         const coInvestorSlugs = round.coInvestors;
         const coInvestors = await prisma.investor.findMany({
@@ -114,20 +95,18 @@ export class GraphRepository {
           select: { id: true, name: true, slug: true, logoUrl: true },
         });
         for (const coInv of coInvestors) {
-          const invId = coInv.id;
-          if (!investorIds.has(invId)) {
-            investorIds.add(invId);
+          if (!investorIds.has(coInv.id)) {
+            investorIds.add(coInv.id);
             addNode({
-              id: invId,
+              id: coInv.id,
               type: 'investor',
               label: coInv.name,
               slug: coInv.slug,
               logoUrl: coInv.logoUrl,
             });
-            // Edge: company -> co-investor (also funded_by)
             edges.push({
               source: company.id,
-              target: invId,
+              target: coInv.id,
               relationship: 'funded_by',
             });
           }
@@ -135,20 +114,16 @@ export class GraphRepository {
       }
     }
 
-    // 2. Add co-investor relationships among investors
-    // For each funding round, connect investors who co-invested
+    // 2. Co-investor relationships
     for (const round of company.fundingRounds) {
       const leadId = round.leadInvestor?.id;
-      // If lead exists and there are co-investors, create edges between lead and each co-investor
       if (leadId && round.coInvestors && round.coInvestors.length > 0) {
-        // Resolve co-investor slugs to IDs
         const coSlugs = round.coInvestors;
         const coInvestors = await prisma.investor.findMany({
           where: { slug: { in: coSlugs } },
           select: { id: true },
         });
         for (const coInv of coInvestors) {
-          // Edge: lead investor -> co-investor (co_invested_with)
           edges.push({
             source: leadId,
             target: coInv.id,
@@ -158,11 +133,10 @@ export class GraphRepository {
       }
     }
 
-    // 3. Add products
+    // 3. Products
     for (const product of company.products) {
-      const nodeId = product.id;
       addNode({
-        id: nodeId,
+        id: product.id,
         type: 'product',
         label: product.name,
         slug: product.slug,
@@ -170,16 +144,15 @@ export class GraphRepository {
       });
       edges.push({
         source: company.id,
-        target: nodeId,
+        target: product.id,
         relationship: 'owns_product',
       });
     }
 
-    // 4. Add tags
+    // 4. Tags
     for (const tag of company.tags) {
-      const nodeId = tag.id;
       addNode({
-        id: nodeId,
+        id: tag.id,
         type: 'tag',
         label: tag.name,
         slug: tag.slug,
@@ -187,42 +160,40 @@ export class GraphRepository {
       });
       edges.push({
         source: company.id,
-        target: nodeId,
+        target: tag.id,
         relationship: 'has_tag',
       });
     }
 
-    // 5. Add competitors (from CompanyRelationship)
-    // relatedFrom: source is the current company, target is other company
+    // 5. Competitors (relatedFrom)
     for (const rel of company.relatedFrom) {
-      const targetCompany = rel.targetCompany;
-      const nodeId = targetCompany.id;
+      const target = rel.sourceCompany; // sourceCompany is the related company
       addNode({
-        id: nodeId,
+        id: target.id,
         type: 'company',
-        label: targetCompany.name,
-        slug: targetCompany.slug,
-        logoUrl: targetCompany.logoUrl,
+        label: target.name,
+        slug: target.slug,
+        logoUrl: target.logoUrl,
       });
       edges.push({
         source: company.id,
-        target: nodeId,
+        target: target.id,
         relationship: rel.relationshipType,
       });
     }
-    // relatedTo: current company is the target
+
+    // 6. Competitors (relatedTo)
     for (const rel of company.relatedTo) {
-      const sourceCompany = rel.sourceCompany;
-      const nodeId = sourceCompany.id;
+      const source = rel.targetCompany; // targetCompany is the related company
       addNode({
-        id: nodeId,
+        id: source.id,
         type: 'company',
-        label: sourceCompany.name,
-        slug: sourceCompany.slug,
-        logoUrl: sourceCompany.logoUrl,
+        label: source.name,
+        slug: source.slug,
+        logoUrl: source.logoUrl,
       });
       edges.push({
-        source: sourceCompany.id,
+        source: source.id,
         target: company.id,
         relationship: rel.relationshipType,
       });
