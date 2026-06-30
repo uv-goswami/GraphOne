@@ -6,6 +6,7 @@ import helmet from '@fastify/helmet';
 import {
   serializerCompiler,
   validatorCompiler,
+  jsonSchemaTransform,
   ZodTypeProvider,
 } from 'fastify-type-provider-zod';
 import { ZodError } from 'zod';
@@ -39,17 +40,17 @@ const server = fastify({
       },
 }).withTypeProvider<ZodTypeProvider>();
 
-// Use the Zod compilers for validation/serialization
+// Use the Zod compilers for validation/serialization (this is the runtime piece;
+// ZodTypeProvider above is a compile-time-only type and can't be passed to these setters)
 server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 
 // ----------------------
-// Swagger / OpenAPI
+// Swagger / OpenAPI (v9.7.0 / v6.0.0)
 // ----------------------
 server.register(swagger as any, {
-  mode: 'dynamic',
-  transform: true,
   openapi: {
+    openapi: '3.0.0',
     info: {
       title: 'GraphOne API',
       description: 'The intelligence layer for the AI economy',
@@ -71,6 +72,7 @@ server.register(swagger as any, {
         },
       },
     },
+    security: [{ apiKey: [] }],
     tags: [
       { name: 'Companies' },
       { name: 'Investors' },
@@ -81,6 +83,7 @@ server.register(swagger as any, {
       { name: 'Stats' },
     ],
   },
+  transform: jsonSchemaTransform,
 });
 
 server.register(swaggerUi as any, {
@@ -100,16 +103,8 @@ server.register(cors, {
   credentials: true,
 });
 
-// Helmet with CSP allowing inline styles for Swagger UI
 server.register(helmet, {
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https:"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      imgSrc: ["'self'", "data:", "https:"],
-    },
-  },
+  contentSecurityPolicy: false,
 });
 
 server.register(rateLimit, {
