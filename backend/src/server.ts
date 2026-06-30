@@ -3,7 +3,7 @@ import fastify from 'fastify';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import helmet from '@fastify/helmet';
-import { validatorCompiler, serializerCompiler } from 'fastify-type-provider-zod';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { ZodError } from 'zod';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
@@ -34,15 +34,15 @@ const server = fastify({
       },
 });
 
-// Use the Zod type provider compilers from the community package
-server.setValidatorCompiler(validatorCompiler);
-server.setSerializerCompiler(serializerCompiler);
+// Use the Zod type provider
+server.setValidatorCompiler(ZodTypeProvider);
+server.setSerializerCompiler(ZodTypeProvider);
 
 // ----------------------
-// Swagger / OpenAPI (v9.7.0 / v6.0.0)
+// Swagger / OpenAPI
 // ----------------------
 server.register(swagger as any, {
-  openapi: true,
+  openapi: '3.0.0',
   info: {
     title: 'GraphOne API',
     description: 'The intelligence layer for the AI economy',
@@ -64,7 +64,6 @@ server.register(swagger as any, {
       },
     },
   },
-  security: [{ apiKey: [] }],
   tags: [
     { name: 'Companies' },
     { name: 'Investors' },
