@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyRequest } from 'fastify';
+import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { NewsService } from '../services/news.service';
 
@@ -8,11 +8,11 @@ const listQuerySchema = z.object({
   cursor: z.string().optional(),
 });
 
-export async function newsRoutes(server: FastifyInstance) {
+export const newsRoutes: FastifyPluginAsyncZod = async (server) => {
   server.get('/news', {
     schema: { querystring: listQuerySchema },
-  }, async (request: FastifyRequest) => {
-    const query = request.query as z.infer<typeof listQuerySchema>;
+  }, async (request) => {
+    const query = request.query;
     const result = await NewsService.listNews({
       tag: query.tag,
       limit: query.limit,
@@ -30,8 +30,8 @@ export async function newsRoutes(server: FastifyInstance) {
 
   server.get('/news/trending', {
     schema: { querystring: z.object({ limit: z.coerce.number().int().min(1).max(50).default(10) }) },
-  }, async (request: FastifyRequest) => {
-    const { limit } = request.query as { limit: number };
+  }, async (request) => {
+    const { limit } = request.query;
     const data = await NewsService.getTrending(limit);
     return {
       data,
@@ -39,4 +39,4 @@ export async function newsRoutes(server: FastifyInstance) {
       error: null,
     };
   });
-}
+};

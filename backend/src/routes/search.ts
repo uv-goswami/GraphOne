@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyRequest } from 'fastify';
+import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { SearchService } from '../services/search.service';
 
@@ -7,11 +7,11 @@ const querySchema = z.object({
   limit: z.coerce.number().int().min(1).max(50).default(20),
 });
 
-export async function searchRoutes(server: FastifyInstance) {
+export const searchRoutes: FastifyPluginAsyncZod = async (server) => {
   server.get('/search', {
     schema: { querystring: querySchema },
-  }, async (request: FastifyRequest) => {
-    const { q, limit } = request.query as { q: string; limit: number };
+  }, async (request) => {
+    const { q, limit } = request.query;
     const results = await SearchService.search(q, limit);
     return {
       data: results,
@@ -23,4 +23,4 @@ export async function searchRoutes(server: FastifyInstance) {
       error: null,
     };
   });
-}
+};

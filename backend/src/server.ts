@@ -70,7 +70,7 @@ server.register(swagger as any, {
         },
       },
     },
-    // ✅ REMOVED global security – endpoints are now public by default
+    // Security is applied per-route (or not at all) – global security removed
     tags: [
       { name: 'Companies' },
       { name: 'Investors' },

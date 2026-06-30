@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyRequest } from 'fastify';
+import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { CompanyService } from '../services/company.service';
 
@@ -36,12 +36,11 @@ const claimBodySchema = z.object({
   claimedBy: z.string().email(),
 });
 
-export async function companyRoutes(server: FastifyInstance) {
-  // GET /companies
+export const companyRoutes: FastifyPluginAsyncZod = async (server) => {
   server.get('/companies', {
     schema: { querystring: querySchema },
-  }, async (request: FastifyRequest) => {
-    const query = request.query as z.infer<typeof querySchema>;
+  }, async (request) => {
+    const query = request.query; // typed automatically
     const result = await CompanyService.listCompanies({
       category: query.category,
       stage: query.stage,
@@ -60,11 +59,10 @@ export async function companyRoutes(server: FastifyInstance) {
     };
   });
 
-  // GET /companies/:slug
   server.get('/companies/:slug', {
     schema: { params: slugParamsSchema },
-  }, async (request: FastifyRequest) => {
-    const { slug } = request.params as { slug: string };
+  }, async (request) => {
+    const { slug } = request.params;
     try {
       const company = await CompanyService.getCompanyBySlug(slug);
       return {
@@ -80,20 +78,18 @@ export async function companyRoutes(server: FastifyInstance) {
     }
   });
 
-  // POST /companies (admin)
   server.post('/companies', {
     schema: {
       body: createBodySchema,
-      security: [{ apiKey: [] }],  // ✅ now inside schema
     },
-    preHandler: async (request: FastifyRequest) => {
+    preHandler: async (request) => {
       const apiKey = request.headers['x-api-key'];
       if (apiKey !== process.env.ADMIN_API_KEY) {
         throw { statusCode: 401, message: 'Invalid or missing API key' };
       }
     },
-  }, async (request: FastifyRequest) => {
-    const body = request.body as z.infer<typeof createBodySchema>;
+  }, async (request) => {
+    const body = request.body;
     const company = await CompanyService.createCompany(body);
     return {
       data: company,
@@ -102,22 +98,20 @@ export async function companyRoutes(server: FastifyInstance) {
     };
   });
 
-  // POST /companies/:slug/claim
   server.post('/companies/:slug/claim', {
     schema: {
       params: slugParamsSchema,
       body: claimBodySchema,
-      security: [{ apiKey: [] }],  // ✅ now inside schema
     },
-    preHandler: async (request: FastifyRequest) => {
+    preHandler: async (request) => {
       const apiKey = request.headers['x-api-key'];
       if (apiKey !== process.env.ADMIN_API_KEY) {
         throw { statusCode: 401, message: 'Invalid or missing API key' };
       }
     },
-  }, async (request: FastifyRequest) => {
-    const { slug } = request.params as { slug: string };
-    const { claimedBy } = request.body as z.infer<typeof claimBodySchema>;
+  }, async (request) => {
+    const { slug } = request.params;
+    const { claimedBy } = request.body;
     try {
       const company = await CompanyService.claimCompany(slug, claimedBy);
       return {
@@ -135,4 +129,4 @@ export async function companyRoutes(server: FastifyInstance) {
       throw err;
     }
   });
-}
+};

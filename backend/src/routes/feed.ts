@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyRequest } from 'fastify';
+import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { FeedService } from '../services/feed.service';
 
@@ -7,11 +7,11 @@ const querySchema = z.object({
   cursor: z.string().optional(),
 });
 
-export async function feedRoutes(server: FastifyInstance) {
+export const feedRoutes: FastifyPluginAsyncZod = async (server) => {
   server.get('/feed', {
     schema: { querystring: querySchema },
-  }, async (request: FastifyRequest) => {
-    const { limit, cursor } = request.query as { limit: number; cursor?: string };
+  }, async (request) => {
+    const { limit, cursor } = request.query;
     const result = await FeedService.getFeed(limit, cursor);
     return {
       data: result.data,
@@ -22,4 +22,4 @@ export async function feedRoutes(server: FastifyInstance) {
       error: null,
     };
   });
-}
+};

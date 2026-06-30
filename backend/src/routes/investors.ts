@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyRequest } from 'fastify';
+import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { InvestorService } from '../services/investor.service';
 
@@ -16,11 +16,11 @@ const investmentsQuerySchema = z.object({
   cursor: z.string().optional(),
 });
 
-export async function investorRoutes(server: FastifyInstance) {
+export const investorRoutes: FastifyPluginAsyncZod = async (server) => {
   server.get('/investors', {
     schema: { querystring: listQuerySchema },
-  }, async (request: FastifyRequest) => {
-    const query = request.query as z.infer<typeof listQuerySchema>;
+  }, async (request) => {
+    const query = request.query;
     const result = await InvestorService.listInvestors({
       type: query.type,
       stageFocus: query.stageFocus,
@@ -40,8 +40,8 @@ export async function investorRoutes(server: FastifyInstance) {
 
   server.get('/investors/:slug', {
     schema: { params: slugParamsSchema },
-  }, async (request: FastifyRequest) => {
-    const { slug } = request.params as { slug: string };
+  }, async (request) => {
+    const { slug } = request.params;
     try {
       const investor = await InvestorService.getInvestorBySlug(slug);
       return {
@@ -59,8 +59,8 @@ export async function investorRoutes(server: FastifyInstance) {
 
   server.get('/investors/most-active', {
     schema: { querystring: z.object({ limit: z.coerce.number().int().min(1).max(50).default(10) }) },
-  }, async (request: FastifyRequest) => {
-    const { limit } = request.query as { limit: number };
+  }, async (request) => {
+    const { limit } = request.query;
     const data = await InvestorService.getMostActive(limit);
     return {
       data,
@@ -71,9 +71,9 @@ export async function investorRoutes(server: FastifyInstance) {
 
   server.get('/investors/:slug/investments', {
     schema: { params: slugParamsSchema, querystring: investmentsQuerySchema },
-  }, async (request: FastifyRequest) => {
-    const { slug } = request.params as { slug: string };
-    const { limit, cursor } = request.query as { limit: number; cursor?: string };
+  }, async (request) => {
+    const { slug } = request.params;
+    const { limit, cursor } = request.query;
     try {
       const result = await InvestorService.getInvestments(slug, limit, cursor);
       return {
@@ -94,8 +94,8 @@ export async function investorRoutes(server: FastifyInstance) {
 
   server.get('/investors/:slug/co-investors', {
     schema: { params: slugParamsSchema },
-  }, async (request: FastifyRequest) => {
-    const { slug } = request.params as { slug: string };
+  }, async (request) => {
+    const { slug } = request.params;
     try {
       const data = await InvestorService.getCoInvestors(slug);
       return {
@@ -110,4 +110,4 @@ export async function investorRoutes(server: FastifyInstance) {
       throw err;
     }
   });
-}
+};

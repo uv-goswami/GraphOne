@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyRequest } from 'fastify';
+import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { ProductService } from '../services/product.service';
 
@@ -11,11 +11,11 @@ const listQuerySchema = z.object({
 
 const slugParamsSchema = z.object({ slug: z.string() });
 
-export async function productRoutes(server: FastifyInstance) {
+export const productRoutes: FastifyPluginAsyncZod = async (server) => {
   server.get('/products', {
     schema: { querystring: listQuerySchema },
-  }, async (request: FastifyRequest) => {
-    const query = request.query as z.infer<typeof listQuerySchema>;
+  }, async (request) => {
+    const query = request.query;
     const result = await ProductService.listProducts({
       category: query.category,
       sort: query.sort,
@@ -34,8 +34,8 @@ export async function productRoutes(server: FastifyInstance) {
 
   server.get('/products/:slug', {
     schema: { params: slugParamsSchema },
-  }, async (request: FastifyRequest) => {
-    const { slug } = request.params as { slug: string };
+  }, async (request) => {
+    const { slug } = request.params;
     try {
       const product = await ProductService.getProductBySlug(slug);
       return {
@@ -50,4 +50,4 @@ export async function productRoutes(server: FastifyInstance) {
       throw err;
     }
   });
-}
+};

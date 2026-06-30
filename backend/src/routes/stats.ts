@@ -1,11 +1,11 @@
-import { FastifyInstance, FastifyRequest } from 'fastify';
+import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { StatsService } from '../services/stats.service';
 import { getCached, setCache } from '../utils/cache';
 
 const CACHE_KEY = 'stats';
 
-export async function statsRoutes(server: FastifyInstance) {
+export const statsRoutes: FastifyPluginAsyncZod = async (server) => {
   server.get('/stats', {
     schema: {
       response: {
@@ -26,7 +26,7 @@ export async function statsRoutes(server: FastifyInstance) {
         }),
       },
     },
-  }, async (_request: FastifyRequest) => {
+  }, async () => {
     const cached = getCached<Awaited<ReturnType<typeof StatsService.getStats>>>(CACHE_KEY);
     if (cached) {
       return {
@@ -43,4 +43,4 @@ export async function statsRoutes(server: FastifyInstance) {
       error: null,
     };
   });
-}
+};
