@@ -3,7 +3,7 @@ import fastify from 'fastify';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import helmet from '@fastify/helmet';
-import { serializerCompiler, validatorCompiler } from '@fastify/type-provider-zod';
+import { validatorCompiler, serializerCompiler } from 'fastify-type-provider-zod';
 import { ZodError } from 'zod';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
@@ -34,11 +34,12 @@ const server = fastify({
       },
 });
 
+// Use the Zod type provider compilers from the community package
 server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 
 // ----------------------
-// Swagger / OpenAPI
+// Swagger / OpenAPI (v9.7.0 / v6.0.0)
 // ----------------------
 server.register(swagger as any, {
   openapi: true,
@@ -73,7 +74,6 @@ server.register(swagger as any, {
     { name: 'Search' },
     { name: 'Stats' },
   ],
-  transform: true,
 });
 
 server.register(swaggerUi as any, {
