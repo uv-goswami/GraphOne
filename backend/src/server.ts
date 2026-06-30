@@ -47,8 +47,9 @@ server.setSerializerCompiler(serializerCompiler);
 // Swagger / OpenAPI (v9.7.0 / v6.0.0)
 // ----------------------
 server.register(swagger as any, {
+  mode: 'dynamic',
+  transform: true,                     // ✅ Converts Zod schemas to JSON schemas
   openapi: {
-    openapi: '3.0.0',
     info: {
       title: 'GraphOne API',
       description: 'The intelligence layer for the AI economy',
@@ -70,7 +71,6 @@ server.register(swagger as any, {
         },
       },
     },
-    // Security is applied per-route (or not at all) – global security removed
     tags: [
       { name: 'Companies' },
       { name: 'Investors' },
