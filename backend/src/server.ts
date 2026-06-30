@@ -39,8 +39,7 @@ const server = fastify({
       },
 }).withTypeProvider<ZodTypeProvider>();
 
-// Use the Zod compilers for validation/serialization (this is the runtime piece;
-// ZodTypeProvider above is a compile-time-only type and can't be passed to these setters)
+// Use the Zod compilers for validation/serialization
 server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 
@@ -71,7 +70,7 @@ server.register(swagger as any, {
         },
       },
     },
-    security: [{ apiKey: [] }],
+    // ✅ REMOVED global security – endpoints are now public by default
     tags: [
       { name: 'Companies' },
       { name: 'Investors' },
