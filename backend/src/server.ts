@@ -41,34 +41,39 @@ server.setSerializerCompiler(serializerCompiler);
 // Swagger / OpenAPI
 // ----------------------
 server.register(swagger, {
-  swagger: {
-    info: {
-      title: 'GraphOne API',
-      description: 'The intelligence layer for the AI economy',
-      version: '1.0.0',
+  openapi: true,
+  info: {
+    title: 'GraphOne API',
+    description: 'The intelligence layer for the AI economy',
+    version: '1.0.0',
+  },
+  servers: [
+    {
+      url: process.env.NODE_ENV === 'production'
+        ? 'https://graphone-api-a5b9.onrender.com'
+        : 'http://localhost:3000',
     },
-    host: process.env.HOST || 'localhost:3000',
-    schemes: ['http', 'https'],
-    consumes: ['application/json'],
-    produces: ['application/json'],
-    securityDefinitions: {
+  ],
+  components: {
+    securitySchemes: {
       apiKey: {
         type: 'apiKey',
         name: 'X-API-Key',
         in: 'header',
       },
     },
-    security: [{ apiKey: [] }],
-    tags: [
-      { name: 'Companies' },
-      { name: 'Investors' },
-      { name: 'Products' },
-      { name: 'News' },
-      { name: 'Feed' },
-      { name: 'Search' },
-      { name: 'Stats' },
-    ],
   },
+  security: [{ apiKey: [] }],
+  tags: [
+    { name: 'Companies' },
+    { name: 'Investors' },
+    { name: 'Products' },
+    { name: 'News' },
+    { name: 'Feed' },
+    { name: 'Search' },
+    { name: 'Stats' },
+  ],
+  transform: true, // Critical for Zod schema conversion
 });
 
 server.register(swaggerUi, {
