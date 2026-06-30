@@ -1,6 +1,7 @@
 # GraphOne Backend API
 
 **Live API:** [https://graphone-api-a5b9.onrender.com](https://graphone-api-a5b9.onrender.com)
+**Swagger docs:** [https://graphone-api-a5b9.onrender.com/docs/](https://graphone-api-a5b9.onrender.com/docs/)
 
 The intelligence layer for the AI economy – one graph connecting AI companies, founders, investors, products, funding rounds, and news.
 
