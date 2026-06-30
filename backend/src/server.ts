@@ -5,6 +5,8 @@ import rateLimit from '@fastify/rate-limit';
 import helmet from '@fastify/helmet';
 import { serializerCompiler, validatorCompiler } from '@fastify/type-provider-zod';
 import { ZodError } from 'zod';
+import swagger from '@fastify/swagger';
+import swaggerUi from '@fastify/swagger-ui';
 import { prisma } from './lib/prisma';
 import { companyRoutes } from './routes/companies';
 import { investorRoutes } from './routes/investors';
@@ -35,6 +37,52 @@ const server = fastify({
 server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 
+// ----------------------
+// Swagger / OpenAPI
+// ----------------------
+server.register(swagger, {
+  swagger: {
+    info: {
+      title: 'GraphOne API',
+      description: 'The intelligence layer for the AI economy',
+      version: '1.0.0',
+    },
+    host: process.env.HOST || 'localhost:3000',
+    schemes: ['http', 'https'],
+    consumes: ['application/json'],
+    produces: ['application/json'],
+    securityDefinitions: {
+      apiKey: {
+        type: 'apiKey',
+        name: 'X-API-Key',
+        in: 'header',
+      },
+    },
+    security: [{ apiKey: [] }],
+    tags: [
+      { name: 'Companies' },
+      { name: 'Investors' },
+      { name: 'Products' },
+      { name: 'News' },
+      { name: 'Feed' },
+      { name: 'Search' },
+      { name: 'Stats' },
+    ],
+  },
+});
+
+server.register(swaggerUi, {
+  routePrefix: '/docs',
+  uiConfig: {
+    docExpansion: 'list',
+    deepLinking: false,
+  },
+  staticCSP: true,
+});
+
+// ----------------------
+// Plugins
+// ----------------------
 server.register(cors, {
   origin: process.env.CORS_ORIGIN?.split(',') || true,
   credentials: true,
@@ -51,7 +99,9 @@ server.register(rateLimit, {
   keyGenerator: (req) => req.ip || 'unknown',
 });
 
+// ----------------------
 // Routes
+// ----------------------
 server.register(companyRoutes);
 server.register(investorRoutes);
 server.register(productRoutes);
@@ -61,7 +111,9 @@ server.register(statsRoutes);
 server.register(feedRoutes);
 server.register(graphRoutes);
 
-// Global error handler
+// ----------------------
+// Global Error Handler
+// ----------------------
 server.setErrorHandler((error, _request, reply) => {
   if (error instanceof ZodError) {
     return reply.status(400).send({
@@ -77,7 +129,6 @@ server.setErrorHandler((error, _request, reply) => {
     });
   }
 
-  // Rate limit error
   if (error && typeof error === 'object' && 'statusCode' in error && error.statusCode === 429) {
     return reply.status(429).send({
       error: {
@@ -89,7 +140,6 @@ server.setErrorHandler((error, _request, reply) => {
   }
 
   server.log.error(error);
-
   return reply.status(500).send({
     error: {
       code: 'INTERNAL_ERROR',
@@ -99,6 +149,9 @@ server.setErrorHandler((error, _request, reply) => {
   });
 });
 
+// ----------------------
+// Health & Root
+// ----------------------
 server.get('/health', async () => ({
   status: 'ok',
   timestamp: new Date().toISOString(),
@@ -109,8 +162,12 @@ server.get('/', async () => ({
   name: 'GraphOne API',
   version: '1.0.0',
   status: 'running',
+  docs: '/docs',
 }));
 
+// ----------------------
+// Shutdown
+// ----------------------
 const shutdown = async () => {
   server.log.info('Shutting down...');
   await server.close();
@@ -121,12 +178,16 @@ const shutdown = async () => {
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
 
+// ----------------------
+// Start
+// ----------------------
 const start = async () => {
   try {
     const port = Number(process.env.PORT) || 3000;
     const host = process.env.HOST || '0.0.0.0';
     await server.listen({ port, host });
     server.log.info(`Server running on http://${host}:${port}`);
+    server.log.info(`Swagger UI available at http://${host}:${port}/docs`);
   } catch (err) {
     server.log.error(err);
     process.exit(1);
