@@ -3,7 +3,11 @@ import fastify from 'fastify';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import helmet from '@fastify/helmet';
-import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import {
+  serializerCompiler,
+  validatorCompiler,
+  ZodTypeProvider,
+} from 'fastify-type-provider-zod';
 import { ZodError } from 'zod';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
@@ -17,6 +21,7 @@ import { statsRoutes } from './routes/stats';
 import { feedRoutes } from './routes/feed';
 import { graphRoutes } from './routes/graph';
 
+// Create server with Zod type provider
 const server = fastify({
   logger: process.env.NODE_ENV === 'development'
     ? {
@@ -32,47 +37,51 @@ const server = fastify({
     : {
         level: process.env.LOG_LEVEL || 'info',
       },
-});
+}).withTypeProvider<ZodTypeProvider>();
 
-// Use the Zod type provider
-server.setValidatorCompiler(ZodTypeProvider);
-server.setSerializerCompiler(ZodTypeProvider);
+// Use the Zod compilers for validation/serialization (this is the runtime piece;
+// ZodTypeProvider above is a compile-time-only type and can't be passed to these setters)
+server.setValidatorCompiler(validatorCompiler);
+server.setSerializerCompiler(serializerCompiler);
 
 // ----------------------
-// Swagger / OpenAPI
+// Swagger / OpenAPI (v9.7.0 / v6.0.0)
 // ----------------------
 server.register(swagger as any, {
-  openapi: '3.0.0',
-  info: {
-    title: 'GraphOne API',
-    description: 'The intelligence layer for the AI economy',
-    version: '1.0.0',
-  },
-  servers: [
-    {
-      url: process.env.NODE_ENV === 'production'
-        ? 'https://graphone-api-a5b9.onrender.com'
-        : 'http://localhost:3000',
+  openapi: {
+    openapi: '3.0.0',
+    info: {
+      title: 'GraphOne API',
+      description: 'The intelligence layer for the AI economy',
+      version: '1.0.0',
     },
-  ],
-  components: {
-    securitySchemes: {
-      apiKey: {
-        type: 'apiKey',
-        name: 'X-API-Key',
-        in: 'header',
+    servers: [
+      {
+        url: process.env.NODE_ENV === 'production'
+          ? 'https://graphone-api-a5b9.onrender.com'
+          : 'http://localhost:3000',
+      },
+    ],
+    components: {
+      securitySchemes: {
+        apiKey: {
+          type: 'apiKey',
+          name: 'X-API-Key',
+          in: 'header',
+        },
       },
     },
+    security: [{ apiKey: [] }],
+    tags: [
+      { name: 'Companies' },
+      { name: 'Investors' },
+      { name: 'Products' },
+      { name: 'News' },
+      { name: 'Feed' },
+      { name: 'Search' },
+      { name: 'Stats' },
+    ],
   },
-  tags: [
-    { name: 'Companies' },
-    { name: 'Investors' },
-    { name: 'Products' },
-    { name: 'News' },
-    { name: 'Feed' },
-    { name: 'Search' },
-    { name: 'Stats' },
-  ],
 });
 
 server.register(swaggerUi as any, {
