@@ -84,7 +84,7 @@ export async function companyRoutes(server: FastifyInstance) {
   server.post('/companies', {
     schema: {
       body: createBodySchema,
-      security: [{ apiKey: [] }],
+      security: [{ apiKey: [] }],  // ✅ now inside schema
     },
     preHandler: async (request: FastifyRequest) => {
       const apiKey = request.headers['x-api-key'];
@@ -107,7 +107,7 @@ export async function companyRoutes(server: FastifyInstance) {
     schema: {
       params: slugParamsSchema,
       body: claimBodySchema,
-      security: [{ apiKey: [] }],
+      security: [{ apiKey: [] }],  // ✅ now inside schema
     },
     preHandler: async (request: FastifyRequest) => {
       const apiKey = request.headers['x-api-key'];
