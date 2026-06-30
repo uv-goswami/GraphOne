@@ -44,11 +44,11 @@ server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 
 // ----------------------
-// Swagger / OpenAPI (v9.7.0 / v6.0.0)
+// Swagger / OpenAPI
 // ----------------------
 server.register(swagger as any, {
   mode: 'dynamic',
-  transform: true,                     // ✅ Converts Zod schemas to JSON schemas
+  transform: true,
   openapi: {
     info: {
       title: 'GraphOne API',
@@ -100,8 +100,16 @@ server.register(cors, {
   credentials: true,
 });
 
+// Helmet with CSP allowing inline styles for Swagger UI
 server.register(helmet, {
-  contentSecurityPolicy: false,
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https:"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  },
 });
 
 server.register(rateLimit, {
