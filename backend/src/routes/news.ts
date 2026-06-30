@@ -10,7 +10,10 @@ const listQuerySchema = z.object({
 
 export const newsRoutes: FastifyPluginAsyncZod = async (server) => {
   server.get('/news', {
-    schema: { querystring: listQuerySchema },
+    schema: {
+      querystring: listQuerySchema,
+      tags: ['News'],
+    },
   }, async (request) => {
     const query = request.query;
     const result = await NewsService.listNews({
@@ -29,7 +32,10 @@ export const newsRoutes: FastifyPluginAsyncZod = async (server) => {
   });
 
   server.get('/news/trending', {
-    schema: { querystring: z.object({ limit: z.coerce.number().int().min(1).max(50).default(10) }) },
+    schema: {
+      querystring: z.object({ limit: z.coerce.number().int().min(1).max(50).default(10) }),
+      tags: ['News'],
+    },
   }, async (request) => {
     const { limit } = request.query;
     const data = await NewsService.getTrending(limit);

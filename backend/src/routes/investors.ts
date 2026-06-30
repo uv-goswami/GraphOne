@@ -18,7 +18,10 @@ const investmentsQuerySchema = z.object({
 
 export const investorRoutes: FastifyPluginAsyncZod = async (server) => {
   server.get('/investors', {
-    schema: { querystring: listQuerySchema },
+    schema: {
+      querystring: listQuerySchema,
+      tags: ['Investors'],
+    },
   }, async (request) => {
     const query = request.query;
     const result = await InvestorService.listInvestors({
@@ -39,7 +42,10 @@ export const investorRoutes: FastifyPluginAsyncZod = async (server) => {
   });
 
   server.get('/investors/:slug', {
-    schema: { params: slugParamsSchema },
+    schema: {
+      params: slugParamsSchema,
+      tags: ['Investors'],
+    },
   }, async (request) => {
     const { slug } = request.params;
     try {
@@ -58,7 +64,10 @@ export const investorRoutes: FastifyPluginAsyncZod = async (server) => {
   });
 
   server.get('/investors/most-active', {
-    schema: { querystring: z.object({ limit: z.coerce.number().int().min(1).max(50).default(10) }) },
+    schema: {
+      querystring: z.object({ limit: z.coerce.number().int().min(1).max(50).default(10) }),
+      tags: ['Investors'],
+    },
   }, async (request) => {
     const { limit } = request.query;
     const data = await InvestorService.getMostActive(limit);
@@ -70,7 +79,11 @@ export const investorRoutes: FastifyPluginAsyncZod = async (server) => {
   });
 
   server.get('/investors/:slug/investments', {
-    schema: { params: slugParamsSchema, querystring: investmentsQuerySchema },
+    schema: {
+      params: slugParamsSchema,
+      querystring: investmentsQuerySchema,
+      tags: ['Investors'],
+    },
   }, async (request) => {
     const { slug } = request.params;
     const { limit, cursor } = request.query;
@@ -93,7 +106,10 @@ export const investorRoutes: FastifyPluginAsyncZod = async (server) => {
   });
 
   server.get('/investors/:slug/co-investors', {
-    schema: { params: slugParamsSchema },
+    schema: {
+      params: slugParamsSchema,
+      tags: ['Investors'],
+    },
   }, async (request) => {
     const { slug } = request.params;
     try {

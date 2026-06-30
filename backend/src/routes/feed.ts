@@ -9,7 +9,10 @@ const querySchema = z.object({
 
 export const feedRoutes: FastifyPluginAsyncZod = async (server) => {
   server.get('/feed', {
-    schema: { querystring: querySchema },
+    schema: {
+      querystring: querySchema,
+      tags: ['Feed'],
+    },
   }, async (request) => {
     const { limit, cursor } = request.query;
     const result = await FeedService.getFeed(limit, cursor);

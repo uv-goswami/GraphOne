@@ -13,7 +13,10 @@ const slugParamsSchema = z.object({ slug: z.string() });
 
 export const productRoutes: FastifyPluginAsyncZod = async (server) => {
   server.get('/products', {
-    schema: { querystring: listQuerySchema },
+    schema: {
+      querystring: listQuerySchema,
+      tags: ['Products'],
+    },
   }, async (request) => {
     const query = request.query;
     const result = await ProductService.listProducts({
@@ -33,7 +36,10 @@ export const productRoutes: FastifyPluginAsyncZod = async (server) => {
   });
 
   server.get('/products/:slug', {
-    schema: { params: slugParamsSchema },
+    schema: {
+      params: slugParamsSchema,
+      tags: ['Products'],
+    },
   }, async (request) => {
     const { slug } = request.params;
     try {

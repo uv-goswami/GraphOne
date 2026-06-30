@@ -38,9 +38,12 @@ const claimBodySchema = z.object({
 
 export const companyRoutes: FastifyPluginAsyncZod = async (server) => {
   server.get('/companies', {
-    schema: { querystring: querySchema },
+    schema: {
+      querystring: querySchema,
+      tags: ['Companies'],
+    },
   }, async (request) => {
-    const query = request.query; // typed automatically
+    const query = request.query;
     const result = await CompanyService.listCompanies({
       category: query.category,
       stage: query.stage,
@@ -60,7 +63,10 @@ export const companyRoutes: FastifyPluginAsyncZod = async (server) => {
   });
 
   server.get('/companies/:slug', {
-    schema: { params: slugParamsSchema },
+    schema: {
+      params: slugParamsSchema,
+      tags: ['Companies'],
+    },
   }, async (request) => {
     const { slug } = request.params;
     try {
@@ -81,6 +87,7 @@ export const companyRoutes: FastifyPluginAsyncZod = async (server) => {
   server.post('/companies', {
     schema: {
       body: createBodySchema,
+      tags: ['Companies'],
     },
     preHandler: async (request) => {
       const apiKey = request.headers['x-api-key'];
@@ -102,6 +109,7 @@ export const companyRoutes: FastifyPluginAsyncZod = async (server) => {
     schema: {
       params: slugParamsSchema,
       body: claimBodySchema,
+      tags: ['Companies'],
     },
     preHandler: async (request) => {
       const apiKey = request.headers['x-api-key'];

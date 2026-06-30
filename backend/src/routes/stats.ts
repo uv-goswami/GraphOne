@@ -25,6 +25,7 @@ export const statsRoutes: FastifyPluginAsyncZod = async (server) => {
           error: z.null(),
         }),
       },
+      tags: ['Stats'],
     },
   }, async () => {
     const cached = getCached<Awaited<ReturnType<typeof StatsService.getStats>>>(CACHE_KEY);

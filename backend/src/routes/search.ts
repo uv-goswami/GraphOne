@@ -9,7 +9,10 @@ const querySchema = z.object({
 
 export const searchRoutes: FastifyPluginAsyncZod = async (server) => {
   server.get('/search', {
-    schema: { querystring: querySchema },
+    schema: {
+      querystring: querySchema,
+      tags: ['Search'],
+    },
   }, async (request) => {
     const { q, limit } = request.query;
     const results = await SearchService.search(q, limit);

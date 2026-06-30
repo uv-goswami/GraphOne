@@ -8,7 +8,10 @@ const paramsSchema = z.object({
 
 export const graphRoutes: FastifyPluginAsyncZod = async (server) => {
   server.get('/companies/:slug/graph', {
-    schema: { params: paramsSchema },
+    schema: {
+      params: paramsSchema,
+      tags: ['Companies'], // This is a company sub‑resource, so tag as Companies
+    },
   }, async (request) => {
     const { slug } = request.params;
     try {
